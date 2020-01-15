@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Observable, of} from 'rxjs';
+import {ObjectUnsubscribedError, Observable, of} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {Weather} from '../shared/models/weather';
 import {map} from 'rxjs/operators';
@@ -8,39 +8,59 @@ import {map} from 'rxjs/operators';
   providedIn: 'root'
 })
 export class WeatherService {
-  private readonly baseUrl: string = 'https://api.openweathermap.org/data/2.5/weather?';
+  private readonly currentUrl: string = 'https://api.openweathermap.org/data/2.5/weather?';
+  private readonly forecastUrl: string = 'https://api.openweathermap.org/data/2.5/forecast?';
   private readonly apikey: string = '&appid=a9b50d1fa06de3dac819e17918fb3f5e';
-  private readonly appendix: string = 'q=';
   private data: Observable<Weather[]>;
 
   constructor(private httpClient: HttpClient) { }
 
-  public all(limit: string = 'London'): Observable<any> {
-    const url: string = this.baseUrl + this.appendix + limit + this.apikey;
+  public currentForZipcode(zipcode: string): Observable<Weather> {
+    const url: string = this.currentUrl + 'zip=' + zipcode + this.apikey;
+    console.log('WeatherService.currentForZipcode(' + zipcode + '): HTTP GET "' + url + '"');
+    return(this.current(url));
+  }
+  public currentForGeolocation(latitude: number, longitude: number): Observable<Weather> {
+    const url: string = this.currentUrl + 'latitude=' + latitude + '&longitude=' + longitude + this.apikey;
+    console.log('WeatherService.currentForGeolocation(' + latitude + ',' + longitude + '): HTTP GET "' + url + '"');
+    return(this.current(url));
+  }
 
-    console.log('UserService.all(): HTTP GET "' + url + '"');
-    // return(this.httpClient.get(url));
+  private current(url: string): Observable<Weather> {
     return(this.httpClient.get(url).pipe(
-        map((data: any) => {
+        map((data) => {
           console.log(data);
-          const weatherA: Array<Weather> = new Array<Weather>();
-          data.results.forEach((item) => {
-            // parse item/JSON into user
-            const weather: Weather = Weather.fromJS(item);
-            if (weather != null) {
-              weatherA.push(weather);
-            }
-          });
-          this.data = of(weatherA);
-          return(weatherA);
+          const weather = Weather.fromCurrentJS(data);
+          return(weather);
         })
     ));
   }
-  public get(id: string): Observable<Weather> {
-    const url: string = this.baseUrl + '?nat=US&seed=' + this.apikey;
-    console.log('UserService.get(' + id + '): HTTP GET "' + url + '"');
-    return((this.data || this.all()).pipe(
-        map((weather) => weather.find((w) => w.id === id))
-    ));
-  }
+
+    public forecastForZipcode(zipcode: string): Observable<Weather> {
+        const url: string = this.currentUrl + 'zip=' + zipcode + this.apikey;
+        console.log('WeatherService.currentForZipcode(' + zipcode + '): HTTP GET "' + url + '"');
+        return(this.forecast(url));
+    }
+    public forecastForGeolocation(latitude: number, longitude: number): Observable<Weather> {
+        const url: string = this.currentUrl + 'latitude=' + latitude + '&longitude=' + longitude + this.apikey;
+        console.log('WeatherService.currentForGeolocation(' + latitude + ',' + longitude + '): HTTP GET "' + url + '"');
+        return(this.forecast(url));
+    }
+
+    public forecast(url: string): Observable<any> {
+        return (this.httpClient.get(url).pipe(
+            map((data: any) => {
+                const weatherA: Array<Weather> = new Array<Weather>();
+                data.list.forEach((item) => {
+                    // parse item/JSON into user
+                    const weather: Weather = Weather.fromForecastJS(item);
+                    if (weather != null) {
+                        weatherA.push(weather);
+                    }
+                });
+                this.data = of(weatherA);
+                return (weatherA);
+            })
+        ));
+    }
 }

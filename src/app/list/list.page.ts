@@ -4,6 +4,8 @@ import {WeatherService} from '../core/weather.service';
 // import {Settings} from 'http2';
 import {Subscription} from 'rxjs';
 import {NavController} from '@ionic/angular';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
+
 
 @Component({
   selector: 'app-list',
@@ -19,8 +21,9 @@ export class ListPage implements OnInit {
   private dataSubscription: Subscription;
   // private settings: Settings;
   private location: Coordinates;
+  // private weather: Weather;
 
-  constructor(private userService: WeatherService,
+  constructor(private weatherService: WeatherService,
               private geolocation: Geolocation,
               private navCtrl: NavController) {
     this.subscription = new Subscription();
@@ -72,12 +75,11 @@ export class ListPage implements OnInit {
   }*/
 
   ngOnInit() {
-    /*this.subscription.add(
-        this.profileService.get().subscribe((settings) => {
-          this.settings = settings || new Settings();
-          this.refresh(this.settings.contactLimit);
+    this.subscription.add(
+        this.weatherService.forecastForZipcode('54481').subscribe((weatherA) => {
+          this.weatherA = weatherA;
         })
-    );*/
+    );
   }
 
   /*displayUserDetail(user: User) {
