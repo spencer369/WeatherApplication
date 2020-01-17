@@ -17,9 +17,14 @@ export class AppComponent {
       icon: 'home'
     },
     {
-      title: 'List',
+      title: 'Hourly Weather',
       url: '/list',
-      icon: 'list'
+      icon: 'clock'
+    },
+    {
+      title: 'Current Weather',
+      url: '/current',
+      icon: 'calendar'
     }
   ];
 

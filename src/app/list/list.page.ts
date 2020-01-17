@@ -13,12 +13,18 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
   styleUrls: ['list.page.scss']
 })
 export class ListPage implements OnInit {
-  readonly DefaultContactLimit: number = 10;
-  readonly MaximumContactLimit: number = 2500;
+  private currentZipcode: string;
+  private currentLatitude: number;
+  private currentLongitude: number;
+  private currentCity: string;
+  private currentCountry: string;
+  private locationSelectOption: string;
   private weatherA: Weather[];
+  private weather: Weather;
   private range = '0';
   private subscription: Subscription;
   private dataSubscription: Subscription;
+  private name: string;
   // private settings: Settings;
   private location: Coordinates;
   // private weather: Weather;
@@ -29,62 +35,72 @@ export class ListPage implements OnInit {
     this.subscription = new Subscription();
   }
 
-  handleFilter(event: Event) {
-    // this.refresh();
+  handleFilter($event: Event) {
+    this.locationSelectOption = $event.target.value;
   }
 
-  /*ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }*/
-
-  /*displayDistance(distance: number) {
-    return(parseInt(String(distance), 10));
-  }
-
-  applyRangeFilter(users: Array<User>, limit?: number, location?: Coordinates, range?: number): Array<User> {
-    range = range || parseInt(this.range, 10);
-    location = location || this.location;
-    limit = limit || this.settings.contactLimit || this.DefaultContactLimit;
-
-    if (location && range) {
-      users = users.filter((user) => {
-        return(user.address.distanceFrom(location.latitude, location.longitude) <= range);
-      });
+  getConditions(weather) {
+    if (this.weather === null) {
+      return('');
     }
-    return(users.slice(0, limit));
+    console.log(weather.conditionsForecast);
+    switch (weather.conditionsForecast.toLowerCase()) {
+      case 'clouds':
+        return 'cloud';
+      case 'rain':
+        return 'rainy';
+      case 'clear':
+        return 'sunny';
+      case 'snow':
+        return 'snow';
+      default:
+        return 'umbrella';
+    }
   }
 
-  refresh(limit?: number) {
-    this.geolocation.getCurrentPosition().then((resp) => {
-      // Filter or update our list of users
-      this.location = resp.coords;
-    }).finally(() => {
-      this.subscription.remove(this.dataSubscription);
-
-      // if limiting to a range, grab the first 2500 records
-      // we have to filter our data here client side
-      const range: number = parseInt(this.range, 10);
-      const adjustedLimit: number = (! range)
-          ? (limit || this.settings.contactLimit || this.DefaultContactLimit)
-          : this.MaximumContactLimit;
-      this.dataSubscription = this.userService.all(adjustedLimit).subscribe((users) => {
-        this.users = this.applyRangeFilter(users, limit, this.location, range);
-      });
-      this.subscription.add(this.dataSubscription);
+  submitZipCode($event: Event) {
+    console.log($event);
+    this.weatherService.forecastForZipcode(this.currentZipcode).subscribe((weatherA) => {
+      this.weatherA = weatherA;
     });
-  }*/
+    this.weatherService.currentForZipcode(this.currentZipcode).subscribe((weatherA) => {
+      this.weather = weatherA;
+    });
+  }
+  submitGeolocation($event: Event) {
+    this.weatherService.forecastForGeolocation(this.currentLatitude, this.currentLongitude).subscribe((weatherA) => {
+      this.weatherA = weatherA;
+    });
+    this.weatherService.currentForGeolocation(this.currentLatitude, this.currentLongitude).subscribe((weatherA) => {
+      this.weather = weatherA;
+    });
+  }
+  submitCity($event: Event) {
+    console.log($event);
+    this.weatherService.forecastForCity(this.currentCity, this.currentCountry).subscribe((weatherA) => {
+      this.weatherA = weatherA;
+    });
+    this.weatherService.currentForCity(this.currentCity, this.currentCountry).subscribe((weatherA) => {
+      this.weather = weatherA;
+    });
+  }
 
   ngOnInit() {
-    this.subscription.add(
-        this.weatherService.forecastForZipcode('54481').subscribe((weatherA) => {
-          this.weatherA = weatherA;
-        })
-    );
+    this.geolocation.getCurrentPosition().then((resp) => {
+      this.location = resp.coords;
+      console.log('resp ', this.location);
+      this.weatherService.forecastForGeolocation(this.location.latitude, this.location.longitude).subscribe((weatherA) => {
+        this.weatherA = weatherA;
+      });
+      this.weatherService.currentForGeolocation(this.location.latitude, this.location.longitude).subscribe((weatherA) => {
+        this.weather = weatherA;
+      });
+    });
   }
 
-  /*displayUserDetail(user: User) {
-    this.navCtrl.navigateForward( ['/detail/' + user.id], {
-      state: user
+  displayUserDetail(weather: Weather) {
+    this.navCtrl.navigateForward( ['./detail/' + weather.locationNameForecast], {
+      state: weather
     });
-  }*/
+  }
 }

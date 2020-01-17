@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title *ngIf="weather != null">
+      <ion-datetime displayFormat="DDDD: MM-DD, h:mm A" value="{{weather.date}}" readonly></ion-datetime>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="weather != null">
+  <div class="metadata">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Address</ion-card-title>
+        <ion-card-subtitle>Home</ion-card-subtitle>
+      </ion-card-header>
+      <ion-item *ngIf="weather">
+        <ion-icon [name]="getConditions(weather)" slot="start"></ion-icon>
+        <ion-item>
+          Current Temp: {{ (9/5*(weather.tempForecast - 273) + 32).toFixed(2)}} F
+        </ion-item>
+        <ion-item>
+          Temp Min: {{ (9/5*(weather.tempMinForecast - 273) + 32).toFixed(2) }} F
+        </ion-item>
+        <ion-item>
+          Temp Max: {{ (9/5*(weather.tempMaxForecast - 273) + 32).toFixed(2) }} F
+        </ion-item>
+      </ion-item>
+      <ion-item>
+        Wind Speed: {{weather.windSpeedForecast}}
+      </ion-item>
+    </ion-card>
+  </div>
+</ion-content>

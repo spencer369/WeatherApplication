@@ -1,0 +1,66 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-item *ngIf="weatherA" >
+          {{ weatherA.locationName }}
+      </ion-item>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-item>
+        <ion-label style="max-width: 100px">Change:</ion-label>
+        <ion-item>
+            <ion-select interface="popover" (ionChange)="handleFilter($event)" style="min-width: 300px">
+                <ion-select-option value="zipCode">Zip Code</ion-select-option>
+                <ion-select-option value="coordinates">Coordinates</ion-select-option>
+                <ion-select-option value="cityState">City</ion-select-option>
+            </ion-select>
+        </ion-item>
+        <ion-item *ngIf="locationSelectOption === 'zipCode'">
+            <div class="zipcode">
+                <ion-input type="text" [(ngModel)]="currentZipcode" placeholder="Zip"></ion-input>
+            </div>
+            <div class="button">
+                <ion-button (click)="submitZipCode($event)">Submit</ion-button>
+            </div>
+        </ion-item>
+        <ion-item *ngIf="locationSelectOption === 'coordinates'">
+            <ion-input type="text" [(ngModel)]="currentLatitude" placeholder="Lat"></ion-input>
+            <ion-input type="text" [(ngModel)]="currentLongitude" placeholder="Long"></ion-input>
+            <ion-button (click)="submitGeolocation($event)">Submit</ion-button>
+        </ion-item>
+        <ion-item *ngIf="locationSelectOption === 'cityState'">
+            <ion-input type="text" [(ngModel)]="currentCity" placeholder="City"></ion-input>
+            <ion-input type="text" [(ngModel)]="currentCountry" placeholder="Country Code"></ion-input>
+            <ion-button (click)="submitCity($event)">Submit</ion-button>
+        </ion-item>
+    </ion-item>
+    <ion-item *ngIf="weatherA">
+      <ion-icon [name]="getConditions(weatherA)" slot="start"></ion-icon>
+      <ion-item>
+         Current Temp: {{ (9/5*(weatherA.temp - 273) + 32).toFixed(2)}} F
+      </ion-item>
+      <ion-item>
+         Temp Min: {{ (9/5*(weatherA.tempMin - 273) + 32).toFixed(2) }} F
+      </ion-item>
+      <ion-item>
+         Temp Max: {{ (9/5*(weatherA.tempMax - 273) + 32).toFixed(2) }} F
+      </ion-item>
+    </ion-item>
+    <ion-item *ngIf="weatherA">
+        Wind Speed: {{ weatherA.windSpeed }}
+    </ion-item>
+    <!--<ion-item *ngIf="weatherA.precipitation === 'rain'">
+        Rain: {{ weatherA.precipitation }}
+    </ion-item>
+    <ion-item *ngIf="weatherA.precipitation === 'snow'">
+        Snow: {{ weatherA.precipitation }}
+    </ion-item>
+    -->
+</ion-content>
+

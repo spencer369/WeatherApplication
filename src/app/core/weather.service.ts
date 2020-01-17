@@ -11,6 +11,7 @@ export class WeatherService {
   private readonly currentUrl: string = 'https://api.openweathermap.org/data/2.5/weather?';
   private readonly forecastUrl: string = 'https://api.openweathermap.org/data/2.5/forecast?';
   private readonly apikey: string = '&appid=a9b50d1fa06de3dac819e17918fb3f5e';
+  public zipcode: string;
   private data: Observable<Weather[]>;
 
   constructor(private httpClient: HttpClient) { }
@@ -21,12 +22,17 @@ export class WeatherService {
     return(this.current(url));
   }
   public currentForGeolocation(latitude: number, longitude: number): Observable<Weather> {
-    const url: string = this.currentUrl + 'latitude=' + latitude + '&longitude=' + longitude + this.apikey;
+    const url: string = this.currentUrl + 'lat=' + latitude + '&lon=' + longitude + this.apikey;
     console.log('WeatherService.currentForGeolocation(' + latitude + ',' + longitude + '): HTTP GET "' + url + '"');
     return(this.current(url));
   }
+  public currentForCity(city: string, country: string): Observable<Weather> {
+      const url: string = this.currentUrl + 'q=' + city + ',' + country + this.apikey;
+      console.log('WeatherService.currentForCity(' + name + '): HTTP GET "' + url + '"');
+      return(this.current(url));
+  }
 
-  private current(url: string): Observable<Weather> {
+  private current(url: string): Observable<any> {
     return(this.httpClient.get(url).pipe(
         map((data) => {
           console.log(data);
@@ -36,14 +42,20 @@ export class WeatherService {
     ));
   }
 
-    public forecastForZipcode(zipcode: string): Observable<Weather> {
-        const url: string = this.currentUrl + 'zip=' + zipcode + this.apikey;
-        console.log('WeatherService.currentForZipcode(' + zipcode + '): HTTP GET "' + url + '"');
+    public forecastForZipcode(zipcode: string): Observable<Weather[]> {
+        this.zipcode = zipcode;
+        const url: string = this.forecastUrl + 'zip=' + zipcode + this.apikey;
+        console.log('WeatherService.forecastForZipcode(' + zipcode + '): HTTP GET "' + url + '"');
         return(this.forecast(url));
     }
-    public forecastForGeolocation(latitude: number, longitude: number): Observable<Weather> {
-        const url: string = this.currentUrl + 'latitude=' + latitude + '&longitude=' + longitude + this.apikey;
-        console.log('WeatherService.currentForGeolocation(' + latitude + ',' + longitude + '): HTTP GET "' + url + '"');
+    public forecastForCity(city: string, country: string): Observable<Weather[]> {
+      const url: string = this.forecastUrl + 'q=' + city + ',' + country + this.apikey;
+      console.log('WeatherService.forecastForGeolocation(' + name + '): HTTP GET "' + url + '"');
+      return(this.forecast(url));
+    }
+    public forecastForGeolocation(latitude: number, longitude: number): Observable<Weather[]> {
+        const url: string = this.forecastUrl + 'lat=' + latitude + '&lon=' + longitude + this.apikey;
+        console.log('WeatherService.forecastForGeolocation(' + latitude + ',' + longitude + '): HTTP GET "' + url + '"');
         return(this.forecast(url));
     }
 
