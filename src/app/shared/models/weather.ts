@@ -6,7 +6,8 @@ export class Weather {
     tempMax: string;
     locationName: string;
     windSpeed: string;
-    precipitation: string;
+    precipitationSnow: number;
+    precipitationRain: number;
 
     tempForecast: string;
     tempMinForecast: string;
@@ -15,7 +16,7 @@ export class Weather {
     date: string;
     conditionsForecast: string;
     precipitationForecast: string;
-    windSpeedForecast: string;
+    windSpeedForecast: number;
 
     get name(): string {
         return(this.locationName);
@@ -26,15 +27,16 @@ export class Weather {
             return(null);
         }
         let conditions = 'n/a';
-        let precipitation = 'n/a';
+        let precipitationSnow = 0;
+        let precipitationRain = 0;
         if ((json.weather || []).length >= 1) {
             conditions = json.weather[0].main;
         }
-        if ((json.rain || []).length >= 1) {
-            precipitation = json.rain['1h'] || json.rain['3h'];
+        if ((json.rain)) {
+            precipitationRain = json.rain['1h'] || json.rain['3h'];
         }
-        if ((json.snow || []).length >= 1) {
-            precipitation = json.snow['1h'] || json.snow['3h'];
+        if ((json.snow)) {
+            precipitationSnow = json.snow['1h'] || json.snow['3h'];
         }
 
         return(Object.assign(Object.create(Weather.prototype), {
@@ -44,7 +46,8 @@ export class Weather {
             tempMax: (json.main || {}).temp_max,
             locationName: json.name,
             windSpeed: json.wind.speed,
-            precipitation,
+            precipitationSnow,
+            precipitationRain,
         }));
     }
 
@@ -53,17 +56,28 @@ export class Weather {
             return(null);
         }
         let conditionsForecast = 'n/a';
+        let precipitationSnow = 0;
+        let precipitationRain = 0;
         if ((json.weather || []).length >= 1) {
             conditionsForecast = json.weather[0].main;
         }
-        console.log(json);
+        if ((json.rain)) {
+            console.log(json.rain['1h']);
+            precipitationRain = json.rain['1h'] || json.rain['3h'];
+        }
+        if ((json.snow)) {
+            console.log(json.snow['1h']);
+            precipitationSnow = json.snow['1h'] || json.snow['3h'];
+        }
         return(Object.assign(Object.create(Weather.prototype), {
             conditionsForecast,
             tempForecast: (json.main || {}).temp,
             tempMinForecast: (json.main || {}).temp_min,
             tempMaxForecast: (json.main || {}).temp_max,
             date: json.dt_txt,
-            windSpeedForeCast: json.wind.speed
+            windSpeedForeCast: json.wind.speed,
+            precipitationRain,
+            precipitationSnow
         }));
     }
 }

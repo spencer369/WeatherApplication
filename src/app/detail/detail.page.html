@@ -13,8 +13,7 @@
   <div class="metadata">
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Address</ion-card-title>
-        <ion-card-subtitle>Home</ion-card-subtitle>
+        <ion-card-title>Estimated Weather</ion-card-title>
       </ion-card-header>
       <ion-item *ngIf="weather">
         <ion-icon [name]="getConditions(weather)" slot="start"></ion-icon>
@@ -28,8 +27,14 @@
           Temp Max: {{ (9/5*(weather.tempMaxForecast - 273) + 32).toFixed(2) }} F
         </ion-item>
       </ion-item>
-      <ion-item>
-        Wind Speed: {{weather.windSpeedForecast}}
+      <ion-item *ngIf="weather">
+        Wind Speed: {{ weather.windSpeedForecast }}
+      </ion-item>
+      <ion-item *ngIf="weather && weather.precipitationSnow !== 0">
+        Snow: {{ weather.precipitationSnow }}
+      </ion-item>
+      <ion-item *ngIf="weather && weather.precipitationRain !== 0">
+        Rain: {{ weather.precipitationRain }}
       </ion-item>
     </ion-card>
   </div>

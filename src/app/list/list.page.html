@@ -40,12 +40,16 @@
       <ion-button (click)="submitCity($event)">Submit</ion-button>
     </ion-item>
   </ion-item>
-  <ion-list>
+  <ion-list *ngIf="weatherA">
     <ion-item *ngFor="let weather of weatherA" (click)="displayUserDetail(weather)">
       <ion-item *ngIf="weather">
         <ion-icon [name]="getConditions(weather)" slot="start"></ion-icon>
       </ion-item>
-      <ion-datetime displayFormat="DDDD: MM-DD, h:mm A" value="{{weather.date}}" readonly></ion-datetime>
+      <ion-datetime displayFormat="DDDD: MM-DD, h:mm A, " value="{{weather.date}}" readonly></ion-datetime>
+       Conditions: {{ weather.conditionsForecast }}
     </ion-item>
   </ion-list>
+  <ion-item *ngIf="weatherA === null">
+    No forecast available
+  </ion-item>
 </ion-content>

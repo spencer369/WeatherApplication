@@ -12,6 +12,9 @@
 </ion-header>
 
 <ion-content>
+    <ion-item *ngIf="weatherA === null">
+        No forecast available
+    </ion-item>
     <ion-item>
         <ion-label style="max-width: 100px">Change:</ion-label>
         <ion-item>
@@ -55,12 +58,11 @@
     <ion-item *ngIf="weatherA">
         Wind Speed: {{ weatherA.windSpeed }}
     </ion-item>
-    <!--<ion-item *ngIf="weatherA.precipitation === 'rain'">
-        Rain: {{ weatherA.precipitation }}
+    <ion-item *ngIf="weatherA && weatherA.precipitationRain !== 0">
+        Rain: {{ weatherA.precipitationRain }}
     </ion-item>
-    <ion-item *ngIf="weatherA.precipitation === 'snow'">
-        Snow: {{ weatherA.precipitation }}
+    <ion-item *ngIf="weatherA && weatherA.precipitationSnow !== 0">
+        Snow: {{ weatherA.precipitationSnow }}
     </ion-item>
-    -->
 </ion-content>
 
