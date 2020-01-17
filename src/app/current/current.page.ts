@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Weather} from '../shared/models/weather';
 import {Subscription} from 'rxjs';
 import {WeatherService} from '../core/weather.service';
@@ -22,9 +22,7 @@ export class CurrentPage implements OnInit {
   private currentCity: string;
   private currentCountry: string;
   private weatherIconName: string;
-  // private settings: Settings;
   private location: Coordinates;
-  // private weather: Weather;
 
   constructor(private weatherService: WeatherService,
               private geolocation: Geolocation,
@@ -34,7 +32,8 @@ export class CurrentPage implements OnInit {
   }
 
   handleFilter($event: Event) {
-    this.locationSelectOption = $event.target.value;
+    const target = $event.target as HTMLTextAreaElement;
+    this.locationSelectOption = target.value;
   }
 
   submitZipCode($event: Event) {

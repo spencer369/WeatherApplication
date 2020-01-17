@@ -36,7 +36,8 @@ export class ListPage implements OnInit {
   }
 
   handleFilter($event: Event) {
-    this.locationSelectOption = $event.target.value;
+    const target = $event.target as HTMLTextAreaElement;
+    this.locationSelectOption = target.value;
   }
 
   getConditions(weather) {
